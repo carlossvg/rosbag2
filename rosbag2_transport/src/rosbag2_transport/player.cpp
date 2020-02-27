@@ -56,7 +56,9 @@ bool Player::is_storage_completely_loaded() const
   return !storage_loading_future_.valid();
 }
 
-void Player::play(const PlayOptions & options)
+void Player::play(
+  const PlayOptions & options,
+  const std::chrono::nanoseconds wait_for_subscribers_timeout)
 {
   prepare_publishers();
 
@@ -65,6 +67,20 @@ void Player::play(const PlayOptions & options)
     [this, options]() {load_storage_content(options);});
 
   wait_for_filled_queue(options);
+
+  if (wait_for_subscribers_timeout > std::chrono::nanoseconds::zero()) {
+    // Wait for at least one subscriber for each publisher
+    const auto start = std::chrono::steady_clock::now();
+    for (const auto & publisher : publishers_) {
+      auto time_left = std::chrono::duration_cast<std::chrono::nanoseconds>(
+        wait_for_subscribers_timeout - (std::chrono::steady_clock::now() - start));
+      if (time_left <= std::chrono::nanoseconds::zero()) {
+        // Not allow to go to negative or zero value for timeout. Wait at least for 1 nanosecond.
+        time_left = std::chrono::nanoseconds(1);
+      }
+      publisher.second->wait_for_matched(1, time_left);
+    }
+  }
 
   play_messages_from_queue();
 }

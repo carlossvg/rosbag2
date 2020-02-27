@@ -43,7 +43,7 @@ public:
   void add_subscription(const std::string & topic_name, size_t expected_number_of_messages)
   {
     auto qos = rclcpp::QoS(rclcpp::KeepAll());
-    qos.get_rmw_qos_profile().depth = 4;
+    qos.get_rmw_qos_profile().depth = 12;
     qos.reliability(RMW_QOS_POLICY_RELIABILITY_SYSTEM_DEFAULT);
     qos.durability(RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT);
     qos.avoid_ros_namespace_conventions(false);
@@ -77,6 +77,9 @@ public:
   {
     return async(
       std::launch::async, [this]() {
+        for (const auto & sub : subscriptions_) {
+          sub->wait_for_matched(1, std::chrono::seconds(3));
+        }
         while (continue_spinning(expected_topics_with_size_)) {
           rclcpp::spin_some(subscriber_node_);
         }

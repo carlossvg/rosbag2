@@ -72,9 +72,14 @@ public:
    *
    * \param storage_options Option regarding the storage (e.g. bag file name)
    * \param play_options Options regarding the playback (e.g. queue size)
+   * \param wait_for_subscribers_timeout Total timeout to wait for at least one subscriber per
+   * each publisher. Default behavior with std::chrono::nanoseconds::zero() will play messages
+   * without wait.
    */
   ROSBAG2_TRANSPORT_PUBLIC
-  void play(const StorageOptions & storage_options, const PlayOptions & play_options);
+  void play(
+    const StorageOptions & storage_options, const PlayOptions & play_options,
+    const std::chrono::nanoseconds wait_for_subscribers_timeout = std::chrono::nanoseconds::zero());
 
   /**
    * Print the bag info contained in the metadata yaml file.

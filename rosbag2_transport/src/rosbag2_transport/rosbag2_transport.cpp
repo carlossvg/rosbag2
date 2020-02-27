@@ -90,7 +90,8 @@ std::shared_ptr<Rosbag2Node> Rosbag2Transport::setup_node(std::string node_prefi
 }
 
 void Rosbag2Transport::play(
-  const StorageOptions & storage_options, const PlayOptions & play_options)
+  const StorageOptions & storage_options, const PlayOptions & play_options,
+  const std::chrono::nanoseconds wait_for_subscribers_timeout)
 {
   try {
     reader_->open(storage_options, {"", rmw_get_serialization_format()});
@@ -98,7 +99,7 @@ void Rosbag2Transport::play(
     auto transport_node = setup_node(play_options.node_prefix);
 
     Player player(reader_, transport_node);
-    player.play(play_options);
+    player.play(play_options, wait_for_subscribers_timeout);
   } catch (std::runtime_error & e) {
     ROSBAG2_TRANSPORT_LOG_ERROR("Failed to play: %s", e.what());
   }

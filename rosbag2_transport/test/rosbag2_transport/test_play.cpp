@@ -90,7 +90,7 @@ TEST_F(RosBag2PlayTestFixture, recorded_messages_are_played_for_all_topics)
   auto await_received_messages = sub_->spin_subscriptions();
 
   Rosbag2Transport rosbag2_transport(reader_, writer_, info_);
-  rosbag2_transport.play(storage_options_, play_options_);
+  rosbag2_transport.play(storage_options_, play_options_, std::chrono::seconds(3));
 
   await_received_messages.get();
 

@@ -48,7 +48,9 @@ public:
     std::shared_ptr<rosbag2_cpp::Reader> reader,
     std::shared_ptr<Rosbag2Node> rosbag2_transport);
 
-  void play(const PlayOptions & options);
+  void play(
+    const PlayOptions & options,
+    const std::chrono::nanoseconds wait_for_subscribers_timeout = std::chrono::nanoseconds::zero());
 
 private:
   void load_storage_content(const PlayOptions & options);
