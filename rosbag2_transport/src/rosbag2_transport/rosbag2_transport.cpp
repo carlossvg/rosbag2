@@ -102,6 +102,7 @@ void Rosbag2Transport::play(
     player.play(play_options, wait_for_subscribers_timeout);
   } catch (std::runtime_error & e) {
     ROSBAG2_TRANSPORT_LOG_ERROR("Failed to play: %s", e.what());
+    throw;
   }
 }
 

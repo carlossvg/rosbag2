@@ -71,12 +71,14 @@ TEST_F(RosBag2PlayTestFixture, recorded_messages_are_played_for_all_topics)
   };
 
   std::vector<std::shared_ptr<rosbag2_storage::SerializedBagMessage>> messages =
-  {serialize_test_message("topic1", 500, primitive_message1),
+  {
+    serialize_test_message("topic1", 500, primitive_message1),
     serialize_test_message("topic1", 700, primitive_message1),
     serialize_test_message("topic1", 900, primitive_message1),
     serialize_test_message("topic2", 550, complex_message1),
     serialize_test_message("topic2", 750, complex_message1),
-    serialize_test_message("topic2", 950, complex_message1)};
+    serialize_test_message("topic2", 950, complex_message1)
+  };
 
   auto prepared_mock_reader = std::make_unique<MockSequentialReader>();
   prepared_mock_reader->prepare(messages, topic_types);
@@ -84,7 +86,7 @@ TEST_F(RosBag2PlayTestFixture, recorded_messages_are_played_for_all_topics)
 
   // Due to a problem related to the subscriber, we play many (3) messages but make the subscriber
   // node spin only until 2 have arrived. Hence the 2 as `launch_subscriber()` argument.
-  sub_->add_subscription<test_msgs::msg::BasicTypes>("/topic1", 2);
+  sub_->add_subscription<test_msgs::msg::BasicTypes>("/topic1", 3);
   sub_->add_subscription<test_msgs::msg::Arrays>("/topic2", 2);
 
   auto await_received_messages = sub_->spin_subscriptions();

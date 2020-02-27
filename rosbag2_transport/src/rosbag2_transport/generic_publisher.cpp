@@ -23,8 +23,9 @@ namespace rosbag2_transport
 GenericPublisher::GenericPublisher(
   rclcpp::node_interfaces::NodeBaseInterface * node_base,
   const std::string & topic,
-  const rosidl_message_type_support_t & type_support)
-: rclcpp::PublisherBase(node_base, topic, type_support, rcl_publisher_get_default_options())
+  const rosidl_message_type_support_t & type_support,
+  const rcl_publisher_options_t publisher_options)
+: rclcpp::PublisherBase(node_base, topic, type_support, publisher_options)
 {}
 
 void GenericPublisher::publish(std::shared_ptr<rmw_serialized_message_t> message)
